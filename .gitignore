@@ -1,0 +1,5 @@
+*.csv
+results.json
+output.json
+sortedOutput.json
+node_modules

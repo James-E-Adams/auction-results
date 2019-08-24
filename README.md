@@ -6,7 +6,7 @@ This is just a quick script to grab that data and generate a CSV that allows you
 
 You could run this each week once the auction results are posted and browse by price.
 
-# Usage
+## Usage
 
 ```
 git clone git@github.com:James-E-Adams/auction-results.git
@@ -19,7 +19,7 @@ You'll get a `results.csv` and a `results.json`.
 
 Then you can open the CSV in google sheets and sort however you like.
 
-# Notes:
+## Notes:
 
 - I've set the delay between calls to 100ms to avoid getting throttled. Seems to be fine. I haven't actually been throttled but from experience it's pretty easy for this to happen.
 - The script just does it for VIC but could easily be modified to do other states/all states if you generate the suburbs list (instructions in `src/index.js`).

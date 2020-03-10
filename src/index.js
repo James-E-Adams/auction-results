@@ -1,5 +1,8 @@
 const fs = require("fs")
 const rp = require("request-promise")
+const allSettled = require("promise.allsettled")
+
+allSettled.shim()
 
 // Run in browser console on https://www.realestate.com.au/auction-results/vic to get the suburbs
 // [...document.querySelectorAll('a')].map(a=>a.href).filter(a=>a.indexOf('3')>-1).map((a)=>a.split('auction-results/')[1])
@@ -13,7 +16,7 @@ const JSON_FILENAME = "results.json"
 const delayBetweenCalls = 100
 
 //Eg url: "https://sales-events-api.realestate.com.au/sales-events/location/ascot-vale-vic-3032"
-const uris = suburbs.map(suburb => `${BASE_URL}/${suburb}`)
+const uris = suburbs.map(suburb => `${BASE_URL}/${suburb}`).slice(0, 10)
 
 const currencyStringToNumber = currencyString =>
   Number(currencyString.replace(/[^0-9.-]+/g, ""))
@@ -36,20 +39,25 @@ const mapAuctionResult = ({ suburb, postcode }) => auctionResult => ({
 const sleeper = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 ;(async () => {
-  const apiResults = await Promise.all(
+  const apiResults = await Promise.allSettled(
     uris.map((uri, index) =>
       sleeper(index * delayBetweenCalls).then(() => {
         console.log(`calling ${index}`)
         return rp({
           uri,
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"
+          },
           json: true
         })
       })
     )
   )
-
+  debugger
   const results = apiResults
     .map(({ data }) => {
+      console.log(data)
       const auctionResults = data && data.auctionResults
       if (!auctionResults) return
       return auctionResults.map(
